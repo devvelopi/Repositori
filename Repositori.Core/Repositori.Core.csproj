@@ -3,6 +3,14 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Description>A usage of the repository pattern to abstract data access using LINQ independent of the data source</Description>
+        <PackageProjectUrl>https://github.com/jaseaman/Repositori</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/jaseaman/Repositori</RepositoryUrl>
+        <PackageTags>repository</PackageTags>
+        <PackageId>Repositori.Core</PackageId>
+        <SignAssembly>true</SignAssembly>
+        <Version>0.1</Version>
+        <Title>Repositori Core</Title>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

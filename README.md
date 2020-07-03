@@ -146,12 +146,12 @@ behind the great pre-existing LINQ functionality.
 A shameless plug for my other project [Uniti](https://github.com/jaseaman/Uniti), an implementation of the Unit of Work pattern which allows 
 transactional functionality across all operations, not just limited to the database.
 
-It works well with making non-transactional repositories into transactional repositories by using Uniti's `IUnitTransactional` interface. 
+It works well with making non-transactional repositories into transactional repositories by using Uniti's `ITransactional` interface. 
 Such as the pseudo code below.
 
 ```c#
 
-public class MockRepository<TEntity, TIdentifier> : IRepository<TEntity, TIdentifier>, IUnitTransactional 
+public class MockRepository<TEntity, TIdentifier> : IRepository<TEntity, TIdentifier>, ITransactional 
 {
     protected readonly IUnitOfWorkBuilder _uow;
     
@@ -178,19 +178,10 @@ public class MockRepository<TEntity, TIdentifier> : IRepository<TEntity, TIdenti
     }
     ...
         
-    public async Task StartUnitAsync()
-    {
-        await _uow.StartAsync();
-    }
+    public async Task StartAsync() => await _uow.StartAsync();
 
-    public async Task CommitUnitAsync() 
-    {
-        await _uow.CommitAsync();
-    }
+    public async Task CommitAsync() => await _uow.CommitAsync();
     
-    public async Task RollbackUnitAsync() 
-    {
-        await _uow.RollbackAsync();
-    }
+    public async Task RollbackUnitAsync() => await _uow.RollbackAsync();
 }
 ```

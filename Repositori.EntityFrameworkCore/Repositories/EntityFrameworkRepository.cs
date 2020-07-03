@@ -108,5 +108,25 @@ namespace Repositori.EntityFrameworkCore.Repositories
                 return entities.ToList();
             });
         }
+
+        /// <inheritdoc />
+        public TEntity Delete(TEntity entity) => Context.Remove(entity).Entity;
+
+        /// <inheritdoc />
+        public async Task<TEntity> DeleteAsync(TEntity entity) => 
+            await Task.Run(() => Context.Remove(entity).Entity);
+
+        /// <inheritdoc />
+        public List<TEntity> Delete(ICollection<TEntity> entities)
+        {
+            Context.RemoveRange(entities);
+            return entities.ToList();
+        }
+
+        /// <inheritdoc />
+        public async Task<List<TEntity>> DeleteAsync(ICollection<TEntity> entities)
+        {
+            return await Task.Run(() => Delete(entities));
+        }
     }
 }
