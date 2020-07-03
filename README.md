@@ -27,8 +27,8 @@ Primary use involves creating custom repositories using the `IRepository` interf
 ```c#
 public class ListRepository<TEntity, TIdentifier> : IRepository<TEntity, TIdentifier> where TEntity : IIdentifiable<TIdentifier>
 {
-    protected readonly List<TEntity> _entities;
-
+    private readonly List<TEntity> _entities;
+    
     public ListRepository(List<TEntity> entities)
     {
         _entities = entities;
@@ -86,6 +86,27 @@ public class ListRepository<TEntity, TIdentifier> : IRepository<TEntity, TIdenti
     /// <inheritdoc />
     public async Task<List<TEntity>> UpdateAsync(ICollection<TEntity> entities) =>
         await Task.Run(() => Update(entities));
+
+    /// <inheritdoc />
+    public TEntity Delete(TEntity entity)
+    {
+        _entities.RemoveAll(e => e.Id.Equals(entity.Id));
+        return entity;
+    }
+
+    /// <inheritdoc />
+    public async Task<TEntity> DeleteAsync(TEntity entity) => await Task.Run(() => Delete(entity));
+
+    /// <inheritdoc />
+    public List<TEntity> Delete(ICollection<TEntity> entities)
+    {
+        _entities.RemoveAll(e => entities.Any(en => en.Id.Equals(e.Id)));
+        return entities.ToList();
+    }
+
+    /// <inheritdoc />
+    public async Task<List<TEntity>> DeleteAsync(ICollection<TEntity> entities) => await Task.Run(() => Delete(entities));
+}
 }
 ```
 
