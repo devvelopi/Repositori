@@ -112,7 +112,21 @@ public class ListRepository<TEntity, TIdentifier> : IRepository<TEntity, TIdenti
 
     /// <inheritdoc />
     public async Task<List<TEntity>> DeleteAsync(ICollection<TEntity> entities) => await Task.Run(() => Delete(entities));
-}
+    
+    /// <inheritdoc />
+    public async Task StartTransactionAsync()
+    {
+    }
+    
+    /// <inheritdoc />
+    public async Task CommitTransactionAsync()
+    {
+    }
+
+    /// <inheritdoc />
+    public async Task RollbackTransactionAsync()
+    {
+    }
 }
 ```
 
@@ -145,6 +159,7 @@ Additionally, the `IRepository` interface is a combination of several subsets of
 - `IReadRepository`
 - `IUpdateRepository`
 - `IDeleteRepository`
+- `ITransactionalRepository`
 
 The reasoning for separation is from a usability standpoint.
 
@@ -173,12 +188,11 @@ behind the great pre-existing LINQ functionality.
 A shameless plug for my other project [Uniti](https://github.com/jaseaman/Uniti), an implementation of the Unit of Work pattern which allows 
 transactional functionality across all operations, not just limited to the database.
 
-It works well with making non-transactional repositories into transactional repositories by using Uniti's `ITransactional` interface. 
 Such as the pseudo code below.
 
 ```c#
 
-public class MockRepository<TEntity, TIdentifier> : IRepository<TEntity, TIdentifier>, ITransactional 
+public class MockRepository<TEntity, TIdentifier> : IRepository<TEntity, TIdentifier> 
 {
     protected readonly IUnitOfWorkBuilder _uow;
     
@@ -205,10 +219,10 @@ public class MockRepository<TEntity, TIdentifier> : IRepository<TEntity, TIdenti
     }
     ...
         
-    public async Task StartAsync() => await _uow.StartAsync();
+    public async Task StartTransactionAsync() => await _uow.StartAsync();
 
-    public async Task CommitAsync() => await _uow.CommitAsync();
+    public async Task CommitTransactionAsync() => await _uow.CommitAsync();
     
-    public async Task RollbackUnitAsync() => await _uow.RollbackAsync();
+    public async Task RollbackTransactionAsync() => await _uow.RollbackAsync();
 }
 ```
