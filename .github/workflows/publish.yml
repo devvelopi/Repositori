@@ -5,7 +5,7 @@ on:
     branches: [ master ]
 
 jobs:
-  publish-core:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -23,23 +23,4 @@ jobs:
         uses: brandedoutcast/publish-nuget@v2.5.2
         with:
           PROJECT_FILE_PATH: Repositori.Core/Repositori.Core.csproj
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-  publish-entity-framework:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 3.1.101
-      - name: Install dependencies
-        run: dotnet restore
-      - name: Build
-        run: dotnet build Repositori.EntityFrameworkCore --configuration Release --no-restore
-      - name: Test
-        run: dotnet test
-      - name: Publish
-        uses: brandedoutcast/publish-nuget@v2.5.2
-        with:
-          PROJECT_FILE_PATH: Repositori.EntityFrameworkCore/Repositori.EntityFrameworkCore.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}

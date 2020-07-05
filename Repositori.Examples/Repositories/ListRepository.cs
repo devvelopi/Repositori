@@ -92,6 +92,21 @@ namespace Repositori.Examples.Repositories
 
         /// <inheritdoc />
         public async Task<List<TEntity>> DeleteAsync(ICollection<TEntity> entities) => await Task.Run(() => Delete(entities));
+
+        /// <inheritdoc />
+        public async Task StartTransactionAsync()
+        {
+        }
+
+        /// <inheritdoc />
+        public async Task CommitTransactionAsync()
+        {
+        }
+
+        /// <inheritdoc />
+        public async Task RollbackTransactionAsync()
+        {
+        }
     }
 }
 

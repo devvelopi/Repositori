@@ -18,7 +18,13 @@ Repositories can be used to wrap:
 
 ## Installation
 
-*Coming soon*
+```bash
+dotnet add package Uniti.Core
+```
+
+## Changelog
+
+See [Changelog](./CHANGELOG.md)
 
 ## Usage
 

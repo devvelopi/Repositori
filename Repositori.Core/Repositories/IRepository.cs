@@ -8,7 +8,8 @@ namespace Repositori.Core.Repositories
     /// <typeparam name="TEntity">The repository data object type</typeparam>
     /// <typeparam name="TIdentifier">The identifier of the data object type</typeparam>
     public interface IRepository<TEntity, in TIdentifier> : IReadRepository<TEntity, TIdentifier>,
-        ICreateRepository<TEntity>, IUpdateRepository<TEntity>, IDeleteRepository<TEntity> where TEntity : IIdentifiable<TIdentifier>
+        ICreateRepository<TEntity>, IUpdateRepository<TEntity>, IDeleteRepository<TEntity>,
+        ITransactionalRepository where TEntity : IIdentifiable<TIdentifier>
     {
     }
 }
