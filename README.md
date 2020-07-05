@@ -19,7 +19,7 @@ Repositories can be used to wrap:
 ## Installation
 
 ```bash
-dotnet add package Uniti.Core
+dotnet add package Repositori.Core
 ```
 
 ## Changelog
@@ -176,6 +176,12 @@ public class SomeService
 ```
 
 ## Works well with
+
+### Other Repositori Implementations
+
+See other common Repositori implementations:
+- [For Entity Framework Core](https://github.com/jaseaman/Repositori.EntityFrameworkCore)
+- [For RESTful Services](https://github.com/jaseaman/Repositori.Rest)
 
 ### Custom LINQ Providers
 
