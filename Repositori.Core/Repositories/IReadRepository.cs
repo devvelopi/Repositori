@@ -13,7 +13,7 @@ namespace Repositori.Core.Repositories
     {
         TEntity GetBy(Expression<Func<TEntity, bool>> filter);
         Task<TEntity> GetByAsync(Expression<Func<TEntity, bool>> filter);
-        Task<TEntity> ListBy(Expression<Func<TEntity, bool>> filter, int skip, int take);
+        ICollection<TEntity> ListBy(Expression<Func<TEntity, bool>> filter, int skip, int take);
         Task<ICollection<TEntity>> ListByAsync(Expression<Func<TEntity, bool>> filter, int skip, int take);
     }
 }

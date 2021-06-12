@@ -25,8 +25,8 @@ namespace Repositori.Core.Repositories
         /// <param name="entity">The data object to delete</param>
         /// <returns>An awaitable task providing the deleted data object</returns>
         Task<TEntity> DeleteAsync(TEntity entity);
-        
-        TEntity DeleteBy(Expression<Func<TEntity, bool>> filter);
+
+        ICollection<TEntity> DeleteBy(Expression<Func<TEntity, bool>> filter);
 
         /// <summary>
         /// Delete a collection of data objects synchronously
