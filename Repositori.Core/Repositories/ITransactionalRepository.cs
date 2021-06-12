@@ -5,7 +5,7 @@ namespace Repositori.Core.Repositories
     /// <summary>
     /// Repository with transactional functionality
     /// </summary>
-    public interface ITransactionalRepository
+    public interface ITransactionalRepository<TEntity> : IRepository<TEntity>
     {
         /// <summary>
         /// Begin a transaction surrounding all repository operations
