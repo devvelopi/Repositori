@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Repositori.Core.Model;
 using Repositori.Core.Repositories;
 using Repositori.Examples.Repositories;
 
@@ -10,8 +10,7 @@ namespace Repositori.Examples.Repositories
     /// <summary>
     /// Example repository that simply uses a list as a lookup
     /// </summary>
-    public class ListRepository<TEntity, TIdentifier> : IRepository<TEntity, TIdentifier>
-        where TEntity : IIdentifiable<TIdentifier>
+    public class ListRepository<TEntity, TIdentifier> : IRepository<TEntity>
     {
         private readonly List<TEntity> _entities;
 
@@ -20,14 +19,17 @@ namespace Repositori.Examples.Repositories
             _entities = entities;
         }
 
-        /// <inheritdoc />
-        public IQueryable<TEntity> Query => _entities.AsQueryable();
+        public TEntity GetBy(Expression<System.Func<TEntity, bool>> filter) =>
+            _entities.AsQueryable().SingleOrDefault(filter);
 
-        /// <inheritdoc />
-        public TEntity GetById(TIdentifier id) => _entities.FirstOrDefault(e => e.Id.Equals(id));
+        public Task<TEntity> GetByAsync(Expression<System.Func<TEntity, bool>> filter) =>
+            Task.Run(() => GetBy(filter));
 
-        /// <inheritdoc />
-        public async Task<TEntity> GetByIdAsync(TIdentifier id) => await Task.Run(() => GetById(id));
+        public ICollection<TEntity> ListBy(Expression<System.Func<TEntity, bool>> filter, int skip, int take) =>
+            _entities.AsQueryable().Where(filter).Skip(skip).Take(take).ToList();
+
+        public Task<ICollection<TEntity>> ListByAsync(Expression<System.Func<TEntity, bool>> filter, int skip, int take) =>
+            Task.Run(() => ListBy(filter, skip, take));
 
         /// <inheritdoc />
         public TEntity Create(TEntity entity)
@@ -53,7 +55,7 @@ namespace Repositori.Examples.Repositories
         /// <inheritdoc />
         public TEntity Update(TEntity entity)
         {
-            var index = _entities.FindIndex(e => e.Id.Equals(entity.Id));
+            var index = _entities.FindIndex(e => e.Equals(entity));
             if (index <= -1) return default;
             _entities[index] = entity;
             return entity;
@@ -76,7 +78,7 @@ namespace Repositori.Examples.Repositories
         /// <inheritdoc />
         public TEntity Delete(TEntity entity)
         {
-            _entities.RemoveAll(e => e.Id.Equals(entity.Id));
+            _entities.Remove(entity);
             return entity;
         }
 
@@ -86,12 +88,19 @@ namespace Repositori.Examples.Repositories
         /// <inheritdoc />
         public List<TEntity> Delete(ICollection<TEntity> entities)
         {
-            _entities.RemoveAll(e => entities.Any(en => en.Id.Equals(e.Id)));
+            foreach(var entity in entities)
+                _entities.Remove(entity);
             return entities.ToList();
         }
 
         /// <inheritdoc />
         public async Task<List<TEntity>> DeleteAsync(ICollection<TEntity> entities) => await Task.Run(() => Delete(entities));
+
+        public TEntity DeleteBy(Expression<System.Func<TEntity, bool>> filter) =>
+            Delete(GetBy(filter));
+
+        public Task<TEntity> DeleteByAsync(Expression<System.Func<TEntity, bool>> filter) =>
+            Task.Run(() => DeleteBy(filter));
 
         /// <inheritdoc />
         public async Task StartTransactionAsync()
@@ -113,7 +122,7 @@ namespace Repositori.Examples.Repositories
 /// <summary>
 /// Example data model containing simple fields
 /// </summary>
-public class DataModel : IIdentifiable<string>
+public class DataModel
 {
     public string Id { get; set; }
     public string SomeField { get; set; }
@@ -128,7 +137,6 @@ public class Program
     {
         var repository = new ListRepository<DataModel, string>(new List<DataModel>
             {new DataModel {Id = "1"}, new DataModel {Id = "2"}});
-        var data = await repository.GetByIdAsync("1");
-        var query = repository.Query.Where(e => e.SomeField.Equals("SomeValue"));
+        var data = await repository.GetByAsync(e => e.Id == "1");
     }
 }
