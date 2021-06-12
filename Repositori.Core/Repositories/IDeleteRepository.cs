@@ -42,6 +42,6 @@ namespace Repositori.Core.Repositories
         /// <returns>An awaitable task providing a list of created data objects</returns>
         Task<List<TEntity>> DeleteAsync(ICollection<TEntity> entities);
 
-        Task<TEntity> DeleteByAsync(Expression<Func<TEntity, bool>> filter);
+        Task<ICollection<TEntity>> DeleteByAsync(Expression<Func<TEntity, bool>> filter);
     }
 }

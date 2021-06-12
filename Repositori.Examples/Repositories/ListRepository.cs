@@ -96,10 +96,15 @@ namespace Repositori.Examples.Repositories
         /// <inheritdoc />
         public async Task<List<TEntity>> DeleteAsync(ICollection<TEntity> entities) => await Task.Run(() => Delete(entities));
 
-        public TEntity DeleteBy(Expression<System.Func<TEntity, bool>> filter) =>
-            Delete(GetBy(filter));
+        /// <inheritdoc />
+        public ICollection<TEntity> DeleteBy(Expression<System.Func<TEntity, bool>> filter) {
+            var toDelete = _entities.AsQueryable().Where(filter).ToList();
+            foreach (var entity in toDelete) Delete(entity);
+            return toDelete;
+        }
 
-        public Task<TEntity> DeleteByAsync(Expression<System.Func<TEntity, bool>> filter) =>
+        /// <inheritdoc />
+        public Task<ICollection<TEntity>> DeleteByAsync(Expression<System.Func<TEntity, bool>> filter) =>
             Task.Run(() => DeleteBy(filter));
 
         /// <inheritdoc />
