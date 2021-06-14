@@ -108,19 +108,13 @@ namespace Repositori.Examples.Repositories
             Task.Run(() => DeleteBy(filter));
 
         /// <inheritdoc />
-        public async Task StartTransactionAsync()
-        {
-        }
+        public Task StartTransactionAsync() => Task.CompletedTask;
 
         /// <inheritdoc />
-        public async Task CommitTransactionAsync()
-        {
-        }
+        public Task CommitTransactionAsync() => Task.CompletedTask;
 
         /// <inheritdoc />
-        public async Task RollbackTransactionAsync()
-        {
-        }
+        public Task RollbackTransactionAsync() => Task.CompletedTask;
     }
 }
 
