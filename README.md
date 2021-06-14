@@ -33,21 +33,24 @@ Primary use involves creating custom repositories using the `IRepository` interf
 ```c#
 public class ListRepository<TEntity, TIdentifier> : IRepository<TEntity, TIdentifier> where TEntity : IIdentifiable<TIdentifier>
 {
-    private readonly List<TEntity> _entities;
-    
+  private readonly List<TEntity> _entities;
+
     public ListRepository(List<TEntity> entities)
     {
         _entities = entities;
     }
 
-    /// <inheritdoc />
-    public IQueryable<TEntity> Query => _entities.AsQueryable();
+    public TEntity GetBy(Expression<System.Func<TEntity, bool>> filter) =>
+        _entities.AsQueryable().SingleOrDefault(filter);
 
-    /// <inheritdoc />
-    public TEntity GetById(TIdentifier id) => _entities.FirstOrDefault(e => e.Id.Equals(id));
+    public Task<TEntity> GetByAsync(Expression<System.Func<TEntity, bool>> filter) =>
+        Task.Run(() => GetBy(filter));
 
-    /// <inheritdoc />
-    public async Task<TEntity> GetByIdAsync(TIdentifier id) => await Task.Run(() => GetById(id));
+    public ICollection<TEntity> ListBy(Expression<System.Func<TEntity, bool>> filter, int skip, int take) =>
+        _entities.AsQueryable().Where(filter).Skip(skip).Take(take).ToList();
+
+    public Task<ICollection<TEntity>> ListByAsync(Expression<System.Func<TEntity, bool>> filter, int skip, int take) =>
+        Task.Run(() => ListBy(filter, skip, take));
 
     /// <inheritdoc />
     public TEntity Create(TEntity entity)
@@ -73,7 +76,7 @@ public class ListRepository<TEntity, TIdentifier> : IRepository<TEntity, TIdenti
     /// <inheritdoc />
     public TEntity Update(TEntity entity)
     {
-        var index = _entities.FindIndex(e => e.Id.Equals(entity.Id));
+        var index = _entities.FindIndex(e => e.Equals(entity));
         if (index <= -1) return default;
         _entities[index] = entity;
         return entity;
@@ -96,7 +99,7 @@ public class ListRepository<TEntity, TIdentifier> : IRepository<TEntity, TIdenti
     /// <inheritdoc />
     public TEntity Delete(TEntity entity)
     {
-        _entities.RemoveAll(e => e.Id.Equals(entity.Id));
+        _entities.Remove(entity);
         return entity;
     }
 
@@ -106,18 +109,30 @@ public class ListRepository<TEntity, TIdentifier> : IRepository<TEntity, TIdenti
     /// <inheritdoc />
     public List<TEntity> Delete(ICollection<TEntity> entities)
     {
-        _entities.RemoveAll(e => entities.Any(en => en.Id.Equals(e.Id)));
+        foreach(var entity in entities)
+            _entities.Remove(entity);
         return entities.ToList();
     }
 
     /// <inheritdoc />
     public async Task<List<TEntity>> DeleteAsync(ICollection<TEntity> entities) => await Task.Run(() => Delete(entities));
-    
+
+    /// <inheritdoc />
+    public ICollection<TEntity> DeleteBy(Expression<System.Func<TEntity, bool>> filter) {
+        var toDelete = _entities.AsQueryable().Where(filter).ToList();
+        foreach (var entity in toDelete) Delete(entity);
+        return toDelete;
+    }
+
+    /// <inheritdoc />
+    public Task<ICollection<TEntity>> DeleteByAsync(Expression<System.Func<TEntity, bool>> filter) =>
+        Task.Run(() => DeleteBy(filter));
+
     /// <inheritdoc />
     public async Task StartTransactionAsync()
     {
     }
-    
+
     /// <inheritdoc />
     public async Task CommitTransactionAsync()
     {
@@ -127,6 +142,7 @@ public class ListRepository<TEntity, TIdentifier> : IRepository<TEntity, TIdenti
     public async Task RollbackTransactionAsync()
     {
     }
+  }
 }
 ```
 
