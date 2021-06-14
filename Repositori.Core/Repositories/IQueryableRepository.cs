@@ -2,7 +2,11 @@
 
 namespace Repositori.Core.Repositories
 {
-    public class IQueryableRepository<TEntity>
+    /// <summary>
+    /// Repository with querying functionality
+    /// </summary>
+    /// <typeparam name="TEntity">The repository data object type</typeparam>
+    public interface IQueryableRepository<TEntity>
     {
         /// <summary>
         /// Queryable source for filtering and mapping the data objects

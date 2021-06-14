@@ -26,6 +26,11 @@ namespace Repositori.Core.Repositories
         /// <returns>An awaitable task providing the deleted data object</returns>
         Task<TEntity> DeleteAsync(TEntity entity);
 
+        /// <summary>
+        /// Delete a data object synchronously, matching the <paramref name="filter"/>.
+        /// </summary>
+        /// <param name="filter">The expression which filters down to the data objects to delete</param>
+        /// <returns>The list of data objects which were deleted</returns>
         ICollection<TEntity> DeleteBy(Expression<Func<TEntity, bool>> filter);
 
         /// <summary>
@@ -42,6 +47,11 @@ namespace Repositori.Core.Repositories
         /// <returns>An awaitable task providing a list of created data objects</returns>
         Task<List<TEntity>> DeleteAsync(ICollection<TEntity> entities);
 
+        /// <summary>
+        /// Delete a data object asynchronously, matching the <paramref name="filter"/>.
+        /// </summary>
+        /// <param name="filter">The expression which filters down to the data objects to delete</param>
+        /// <returns>The list of data objects which were deleted</returns>
         Task<ICollection<TEntity>> DeleteByAsync(Expression<Func<TEntity, bool>> filter);
     }
 }
